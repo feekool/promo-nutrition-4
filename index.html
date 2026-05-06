@@ -1,1 +1,532 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="theme-color" content="#2563eb">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>CourseHub — Продажа курсов + Живой форум на Feekool | Запуск за 1 минуту</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --text: #0f172a;
+            --text-sec: #475569;
+            --text-muted: #94a3b8;
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --accent: #f97316;
+            --accent-dark: #ea580c;
+            --border: #e2e8f0;
+            --shadow: 0 4px 16px rgba(0,0,0,0.04);
+            --shadow-lg: 0 12px 32px rgba(37,99,235,0.12);
+            --radius: 16px;
+            --radius-lg: 24px;
+            --ease: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.55;
+            font-size: clamp(15px, 1.7vw, 16px);
+            overflow-x: hidden;
+        }
+        .wrap { max-width: 1200px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 24px); }
+        h1,h2,h3 { line-height: 1.2; font-weight: 800; letter-spacing: -0.02em; }
+        h1 { font-size: clamp(2.4rem, 6.5vw, 3.4rem); }
+        h2 { font-size: clamp(1.9rem, 5vw, 2.4rem); }
+        h3 { font-size: clamp(1.2rem, 3.5vw, 1.35rem); }
+        p { color: var(--text-sec); }
+        a { text-decoration: none; color: inherit; transition: color 0.2s; }
+        img { max-width: 100%; display: block; }
 
+        /* Nav */
+        .nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: clamp(14px, 2.5vw, 18px) 0; position: sticky; top: 0; z-index: 50;
+            background: rgba(248,250,252,0.85); backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border); gap: 12px; flex-wrap: wrap;
+        }
+        .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.3rem; color: var(--primary); }
+        .logo-dot { width: 34px; height: 34px; background: var(--primary); color: white; border-radius: 10px; display: grid; place-items: center; font-size: 16px; }
+        .nav-links { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+        .nav-links a:not(.btn) { font-weight: 500; color: var(--text-sec); font-size: 0.95rem; }
+        .nav-links a:not(.btn):hover { color: var(--primary); }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: clamp(10px, 2.5vw, 12px) clamp(18px, 3.5vw, 24px);
+            border-radius: 50px; font-weight: 600; font-size: 0.95rem;
+            transition: all 0.25s var(--ease); cursor: pointer; border: 2px solid transparent; min-height: 46px;
+        }
+        .btn-primary { background: var(--primary); color: white; box-shadow: var(--shadow); }
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+        .btn-accent { background: var(--accent); color: white; }
+        .btn-accent:hover { background: var(--accent-dark); transform: translateY(-2px); }
+        .btn-ghost { background: transparent; border-color: var(--border); color: var(--text); }
+        .btn-ghost:hover { border-color: var(--primary); color: var(--primary); background: rgba(37,99,235,0.04); }
+        .btn-full { width: 100%; max-width: 280px; }
+
+        /* Hero */
+        .hero {
+            display: grid; grid-template-columns: 1fr 1fr; gap: clamp(28px, 5vw, 48px);
+            padding: clamp(56px, 9vw, 72px) 0 clamp(48px, 7vw, 64px); align-items: center;
+            position: relative;
+        }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 6px; background: rgba(37,99,235,0.08);
+            color: var(--primary-dark); padding: 6px 12px; border-radius: 30px; font-weight: 600; font-size: 0.85rem;
+            margin-bottom: 18px; border: 1px solid rgba(37,99,235,0.15);
+        }
+        .hero h1 { margin-bottom: 20px; }
+        .hero p { font-size: clamp(1.05rem, 3vw, 1.15rem); margin-bottom: 28px; max-width: 560px; }
+        .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 32px; }
+        .hero-stats { display: flex; gap: 28px; flex-wrap: wrap; border-top: 1px solid var(--border); padding-top: 24px; }
+        .stat { display: flex; flex-direction: column; }
+        .stat-val { font-weight: 800; font-size: 1.4rem; color: var(--primary); }
+        .stat-lbl { font-size: 0.85rem; color: var(--text-muted); }
+
+        .hero-visual { position: relative; height: clamp(260px, 38vw, 340px); }
+        .float-card {
+            position: absolute; background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); width: clamp(180px, 20vw, 220px);
+            transition: transform 0.3s var(--ease);
+        }
+        .fc1 { top: 10%; right: 5%; transform: rotate(-3deg); }
+        .fc2 { bottom: 15%; left: 5%; transform: rotate(4deg); z-index: 2; }
+        .fc3 { top: 45%; right: 20%; transform: rotate(1deg); opacity: 0.85; z-index: 1; }
+        .card-head { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.9rem; margin-bottom: 10px; }
+        .card-dot { width: 8px; height: 8px; border-radius: 50%; }
+        .card-dot.blue { background: var(--primary); }
+        .card-dot.orange { background: var(--accent); }
+        .card-line { height: 6px; background: var(--border); border-radius: 4px; margin-bottom: 6px; }
+        .card-line.w70 { width: 70%; } .card-line.w40 { width: 40%; } .card-line.w90 { width: 90%; }
+
+        @media (max-width: 900px) {
+            .hero { grid-template-columns: 1fr; text-align: center; }
+            .hero p { margin: 0 auto 28px; }
+            .hero-actions { justify-content: center; }
+            .hero-stats { justify-content: center; }
+            .hero-visual { margin: 32px auto 0; }
+            .fc1 { right: 15%; } .fc2 { left: 10%; } .fc3 { right: 25%; }
+        }
+
+        /* Sections */
+        .sec { padding: clamp(56px, 9vw, 72px) 0; }
+        .sec-head { text-align: center; max-width: 720px; margin: 0 auto 48px; }
+        .sec-head p { margin-top: 14px; font-size: 1.05rem; }
+
+        /* Value Grid */
+        .val-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+        .val-card {
+            background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+            padding: 24px; transition: all 0.3s var(--ease);
+        }
+        .val-card:hover { transform: translateY(-4px); border-color: var(--primary); box-shadow: var(--shadow-lg); }
+        .val-icon { width: 44px; height: 44px; background: rgba(37,99,235,0.08); border-radius: 12px; display: grid; place-items: center; font-size: 20px; margin-bottom: 16px; }
+        .val-card h3 { margin-bottom: 10px; }
+        .val-card p { font-size: 0.95rem; }
+
+        /* Courses / Pricing */
+        .courses-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-top: 32px; }
+        .course-card {
+            background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+            padding: 28px; display: flex; flex-direction: column; position: relative; overflow: hidden;
+        }
+        .course-card.popular::before {
+            content: "Хит продаж"; position: absolute; top: 16px; right: 16px;
+            background: var(--accent); color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700;
+        }
+        .course-tag { font-size: 0.85rem; color: var(--primary); font-weight: 600; margin-bottom: 12px; }
+        .course-card h3 { margin-bottom: 8px; }
+        .course-card .price { font-size: 1.6rem; font-weight: 800; margin: 16px 0; color: var(--text); }
+        .course-card .price span { font-size: 0.9rem; color: var(--text-muted); font-weight: 500; }
+        .course-list { list-style: none; margin-bottom: 24px; flex-grow: 1; }
+        .course-list li { padding: 8px 0; font-size: 0.95rem; display: flex; align-items: center; gap: 10px; }
+        .course-list li::before { content: "✓"; color: var(--primary); font-weight: 700; }
+        .course-card .btn { margin-top: auto; }
+
+        /* Forum Integration */
+        .integrate-wrap {
+            background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-xl);
+            padding: clamp(24px, 5vw, 32px); margin-top: 24px;
+        }
+        .integrate-row {
+            display: grid; grid-template-columns: minmax(120px, 160px) 1fr auto; gap: 18px; align-items: center;
+            padding: 18px 0; border-bottom: 1px solid var(--border);
+        }
+        .integrate-row:last-child { border-bottom: none; }
+        .integrate-name { font-weight: 700; color: var(--text); }
+        .integrate-desc { color: var(--text-sec); font-size: 0.95rem; }
+        .integrate-badge { background: var(--bg); color: var(--primary); padding: 6px 12px; border-radius: 30px; font-size: 0.8rem; font-weight: 600; border: 1px solid var(--border); }
+        @media (max-width: 768px) {
+            .integrate-row { grid-template-columns: 1fr; gap: 10px; }
+            .integrate-badge { align-self: flex-start; }
+        }
+
+        /* Setup / Feekool Adaptation */
+        .setup-box {
+            background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-xl);
+            padding: clamp(28px, 5vw, 36px);
+        }
+        .steps-list { counter-reset: step; display: grid; gap: 28px; margin-top: 20px; }
+        .step { position: relative; padding-left: 50px; counter-increment: step; }
+        .step::before {
+            content: counter(step); position: absolute; left: 0; top: 2px;
+            width: 36px; height: 36px; background: var(--bg); border: 2px solid var(--primary);
+            border-radius: 50%; display: grid; place-items: center; font-weight: 700; color: var(--primary);
+        }
+        .step:not(:last-child)::after {
+            content: ""; position: absolute; left: 17px; top: 36px; bottom: -22px; width: 2px; background: repeating-linear-gradient(180deg, var(--border) 0px, var(--border) 4px, transparent 4px, transparent 8px);
+        }
+        .step h4 { font-weight: 700; margin-bottom: 6px; }
+        .step p { font-size: 0.95rem; }
+        .step a { color: var(--primary-dark); font-weight: 600; border-bottom: 1px dashed var(--primary-dark); }
+        .step a:hover { border-bottom-style: solid; }
+        .setup-tip {
+            background: #fff7ed; border-left: 4px solid var(--accent); padding: 16px; border-radius: 0 12px 12px 0; margin-top: 32px; font-size: 0.95rem; color: #7c2d12;
+        }
+        .setup-cta { text-align: center; margin-top: 36px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+        /* Testimonials */
+        .proof-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-top: 32px; }
+        .proof-card {
+            background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; position: relative;
+        }
+        .proof-quote { font-size: 1rem; line-height: 1.6; color: var(--text-sec); margin-bottom: 18px; font-style: italic; }
+        .proof-meta { display: flex; align-items: center; gap: 12px; }
+        .proof-avatar { width: 42px; height: 42px; background: linear-gradient(135deg, var(--primary), var(--accent)); border-radius: 50%; display: grid; place-items: center; color: white; font-weight: 700; font-size: 0.85rem; }
+        .proof-info h5 { font-weight: 700; font-size: 1rem; }
+        .proof-info p { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
+
+        /* Final CTA */
+        .final-cta {
+            text-align: center; background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white; border-radius: var(--radius-lg); padding: clamp(48px, 8vw, 64px) clamp(20px, 4vw, 32px);
+            margin: clamp(40px, 6vw, 56px) 0; box-shadow: var(--shadow-lg); position: relative; overflow: hidden;
+        }
+        .final-cta::before {
+            content: ''; position: absolute; top: -50%; left: -20%; width: 140%; height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 60%); pointer-events: none;
+        }
+        .final-cta h2 { margin-bottom: 16px; color: white; }
+        .final-cta p { max-width: 680px; margin: 0 auto 28px; color: rgba(255,255,255,0.9); font-size: 1.05rem; }
+        .final-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; position: relative; }
+        .final-btns .btn { background: white; color: var(--primary-dark); }
+        .final-btns .btn:hover { background: #f8fafc; transform: translateY(-2px); }
+        .final-btns .btn-ghost { background: transparent; border-color: rgba(255,255,255,0.4); color: white; }
+        .final-btns .btn-ghost:hover { border-color: white; background: rgba(255,255,255,0.1); }
+
+        /* Footer */
+        footer { text-align: center; padding: 48px 0 32px; color: var(--text-muted); font-size: 0.9rem; border-top: 1px solid var(--border); margin-top: 32px; }
+        footer a { color: var(--text); font-weight: 600; }
+        footer a:hover { text-decoration: underline; color: var(--primary); }
+        .footer-nav { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin: 20px 0; }
+
+        /* Mobile CTA */
+        .mobile-cta {
+            display: none; position: fixed; bottom: clamp(14px, 3vw, 18px); left: clamp(14px, 3vw, 18px); right: clamp(14px, 3vw, 18px);
+            z-index: 999; padding: 14px; background: var(--surface); border-radius: 18px; box-shadow: var(--shadow-lg);
+            animation: slideUp 0.3s var(--ease); border: 1px solid var(--border);
+        }
+        @keyframes slideUp { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .mobile-cta .btn { width: 100%; padding: 14px; }
+
+        @media (max-width: 768px) {
+            .nav { flex-direction: column; align-items: center; text-align: center; }
+            .nav-links { justify-content: center; width: 100%; }
+            .mobile-cta { display: block; }
+        }
+        @media (min-width: 769px) { .hide-desk { display: none; } }
+
+        :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: 4px; }
+        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
+    </style>
+</head>
+<body>
+
+<div class="wrap">
+    <nav class="nav">
+        <a href="#" class="logo"><div class="logo-dot">C</div> CourseHub</a>
+        <div class="nav-links">
+            <a href="#courses">Курсы</a>
+            <a href="#forum">Интеграция</a>
+            <a href="#setup">Установка</a>
+            <a href="#contact" class="btn btn-primary">🚀 Запустить курс</a>
+        </div>
+    </nav>
+
+    <header class="hero" aria-labelledby="hero-title">
+        <div class="hero-content">
+            <span class="hero-badge">🔥 Платформа для авторов</span>
+            <h1 id="hero-title">Продавайте курсы.<br>Удерживайте через сообщество.</h1>
+            <p>Запустите образовательную платформу с живым форумом на базе Feekool. Без абонентской платы, сложных интеграций и ограничений. Вы контролируете контент, цены и аудиторию.</p>
+            <div class="hero-actions">
+                <a href="#courses" class="btn btn-primary btn-full">📚 Смотреть каталог</a>
+                <a href="#setup" class="btn btn-ghost btn-full">🛠️ Развернуть форум</a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat"><span class="stat-val">+42%</span><span class="stat-lbl">завершение курсов</span></div>
+                <div class="stat"><span class="stat-val">0 ₽</span><span class="stat-lbl">платформа навсегда</span></div>
+                <div class="stat"><span class="stat-val">60 сек</span><span class="stat-lbl">на запуск</span></div>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="float-card fc1">
+                <div class="card-head"><span class="card-dot orange"></span>Оплата курса</div>
+                <div class="card-line w90"></div><div class="card-line w70"></div>
+                <div style="margin-top:10px; font-size:0.8rem; color:var(--accent); font-weight:600;">✅ Подтверждено</div>
+            </div>
+            <div class="float-card fc2">
+                <div class="card-head"><span class="card-dot blue"></span>Доступ к модулю</div>
+                <div class="card-line w70"></div><div class="card-line w40"></div>
+                <div style="margin-top:10px; font-size:0.8rem; color:var(--primary); font-weight:600;">🔓 Открыт</div>
+            </div>
+            <div class="float-card fc3">
+                <div class="card-head"><span class="card-dot blue"></span>Вопрос куратору</div>
+                <div class="card-line w90"></div><div class="card-line w70"></div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="sec" aria-labelledby="value-title">
+            <div class="sec-head">
+                <h2 id="value-title">Почему форум увеличивает продажи курсов</h2>
+                <p>Исследования EdTech показывают: студенты, участвующие в обсуждениях, в 3 раза чаще покупают следующие модули и оставляют рекомендации.</p>
+            </div>
+            <div class="val-grid">
+                <article class="val-card">
+                    <div class="val-icon">📈</div>
+                    <h3>Рост LTV и допродаж</h3>
+                    <p>Студенты видят прогресс одногруппников, задают вопросы о продвинутых модулях. Сообщество продаёт лучше лендинга.</p>
+                </article>
+                <article class="val-card">
+                    <div class="val-icon">🛡️</div>
+                    <h3>Нулевые комиссии</h3>
+                    <p>Не платите 10-30% GetCourse, Stepik или Tilda. Feekool работает на вашем домене. Все платежи идут напрямую вам.</p>
+                </article>
+                <article class="val-card">
+                    <div class="val-icon">🔄</div>
+                    <h3>Автоматическая поддержка</h3>
+                    <p>Один ответ в ветке видят все. FAQ, шаблоны, peer-review экономят до 6 часов в неделю на техподдержке.</p>
+                </article>
+                <article class="val-card">
+                    <div class="val-icon">🌐</div>
+                    <h3>Свой цифровой актив</h3>
+                    <p>Не зависите от закрытых платформ. Экспортируйте данные, кастомизируйте дизайн, переносите хостинг без потери контента.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="sec" id="courses" aria-labelledby="courses-title">
+            <div class="sec-head">
+                <h2 id="courses-title">Готовые шаблоны курсов + Интеграция форума</h2>
+                <p>Выберите формат, подключите платёжную ссылку и откройте доступ к закрытым веткам форума.</p>
+            </div>
+            <div class="courses-grid">
+                <article class="course-card">
+                    <span class="course-tag">Старт</span>
+                    <h3>Базовый курс</h3>
+                    <div class="price">4 900 ₽ <span>/ разово</span></div>
+                    <ul class="course-list">
+                        <li>3 видео-модуля + конспекты</li>
+                        <li>Доступ к общему форуму</li>
+                        <li>Чек-листы и тесты</li>
+                        <li>Без проверки ДЗ</li>
+                    </ul>
+                    <a href="#contact" class="btn btn-ghost">Подробнее →</a>
+                </article>
+                <article class="course-card popular">
+                    <span class="course-tag">Профессионал</span>
+                    <h3>Полный курс + Форум</h3>
+                    <div class="price">14 900 ₽ <span>/ разово</span></div>
+                    <ul class="course-list">
+                        <li>8 модулей + кейсы</li>
+                        <li>Закрытые ветки по модулям</li>
+                        <li>Проверка ДЗ куратором</li>
+                        <li>Сертификат + нетворкинг</li>
+                    </ul>
+                    <a href="#contact" class="btn btn-primary">Купить доступ →</a>
+                </article>
+                <article class="course-card">
+                    <span class="course-tag">Подписка</span>
+                    <h3>Клуб экспертов</h3>
+                    <div class="price">2 900 ₽ <span>/ месяц</span></div>
+                    <ul class="course-list">
+                        <li>Ежемесячные обновления</li>
+                        <li>Прямые эфиры + разборы</li>
+                        <li>Доступ ко всем веткам</li>
+                        <li>Приоритетная поддержка</li>
+                    </ul>
+                    <a href="#contact" class="btn btn-ghost">Оформить подписку →</a>
+                </article>
+            </div>
+        </section>
+
+        <section class="sec" id="forum" aria-labelledby="forum-title">
+            <div class="sec-head">
+                <h2 id="forum-title">Как Feekool адаптируется под ваши курсы</h2>
+                <p>Каждый модуль получает свою ветку. Студенты общаются, сдают работы, получают фидбэк. Вы управляете доступом и монетизируете контент.</p>
+            </div>
+            <div class="integrate-wrap">
+                <div class="integrate-row">
+                    <div class="integrate-name">Оплата курса</div>
+                    <div class="integrate-desc">ЮKassa, CloudPayments, Tilda-платежи или прямая ссылка на перевод. После оплаты — авто-инвайтинг в форум.</div>
+                    <span class="integrate-badge">💳 Платёжный шлюз</span>
+                </div>
+                <div class="integrate-row">
+                    <div class="integrate-name">Структура модулей</div>
+                    <div class="integrate-desc">Каждый раздел курса = отдельная категория форума. Доступ открывается по тегу/роли после оплаты.</div>
+                    <span class="integrate-badge">📂 Категории</span>
+                </div>
+                <div class="integrate-row">
+                    <div class="integrate-name">Проверка заданий</div>
+                    <div class="integrate-desc">Студент создаёт тред «ДЗ #3», куратор комментирует. История хранится в открытом доступе для группы.</div>
+                    <span class="integrate-badge">✅ Peer-review</span>
+                </div>
+                <div class="integrate-row">
+                    <div class="integrate-name">Нетворкинг выпускников</div>
+                    <div class="integrate-desc">Отдельная ветка «Карьера и коллаборации». Выпускники делятся вакансиями, ищут клиентов, усиливают бренд.</div>
+                    <span class="integrate-badge">🤝 Сообщество</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="sec" id="setup" aria-labelledby="setup-title">
+            <div class="sec-head">
+                <h2 id="setup-title">Разверните платформу продаж за 1 минуту</h2>
+                <p>Технически процесс одинаков для любого проекта. Далее вы подключаете платежи, добавляете контент и настраиваете правила форума.</p>
+            </div>
+            <div class="setup-box">
+                <div class="steps-list">
+                    <div class="step">
+                        <h4>Создайте аккаунт на GitHub</h4>
+                        <p>Бесплатная регистрация на <a href="https://github.com" target="_blank">github.com</a> (2 минуты)</p>
+                    </div>
+                    <div class="step">
+                        <h4>Скопируйте шаблон Feekool</h4>
+                        <p>Откройте <a href="https://github.com/feekool/feekool.github.io" target="_blank">feekool.github.io</a> → <strong>Use this template</strong> → <strong>Create new repository</strong></p>
+                    </div>
+                    <div class="step">
+                        <h4>Включите публикацию</h4>
+                        <p><strong>Settings</strong> → <strong>Pages</strong> → ветка <code>main</code> → <strong>Save</strong>. Сайт появится через ~60 сек по адресу <code>никнейм.github.io/репозиторий</code></p>
+                    </div>
+                    <div class="step">
+                        <h4>Адаптируйте под продажи курсов</h4>
+                        <p>Замените заголовки, добавьте кнопки «Купить», вставьте платёжные ссылки. Создайте категории: «Модуль 1», «ДЗ», «Поддержка».</p>
+                    </div>
+                    <div class="step">
+                        <h4>Настройте доступ и запуск</h4>
+                        <p>Подключите скрипт инвайтинга или ручной доступ. Опубликуйте ссылку на лендинг. Платформа готова к продажам.</p>
+                    </div>
+                </div>
+                <div class="setup-tip">💡 <strong>Совет для авторов:</strong> Не перегружайте стартовую версию. Запустите 1 курс + 3 ветки форума. Соберите первые отзывы, затем масштабируйте структуру и подключите подписочную модель.</div>
+                <div class="setup-cta">
+                    <a href="#courses" class="btn btn-primary">📚 Посмотреть демо курса</a>
+                    <a href="https://github.com/feekool/feekool.github.io" target="_blank" class="btn btn-ghost">⚡ Скопировать Feekool</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="sec" aria-labelledby="proof-title">
+            <div class="sec-head">
+                <h2 id="proof-title">Результаты авторов, перешедших на Feekool</h2>
+            </div>
+            <div class="proof-grid">
+                <div class="proof-card">
+                    <p class="proof-quote">«Ушла с GetCourse на Feekool. Комиссии 0%, студенты в одном месте. Продажи второго потока выросли на 38% за счёт сарафанного радио внутри форума.»</p>
+                    <div class="proof-meta">
+                        <div class="proof-avatar">АК</div>
+                        <div class="proof-info"><h5>Анна К.</h5><p>Автор курса «Нутрициология Pro»</p></div>
+                    </div>
+                </div>
+                <div class="proof-card">
+                    <p class="proof-quote">«Встроенный форум заменил мне 3 сервиса: чат, LMS и базу знаний. Студенты видят чужие ДЗ, задают вопросы, я отвечаю один раз. Экономия 8 часов в неделю.»</p>
+                    <div class="proof-meta">
+                        <div class="proof-avatar">ИМ</div>
+                        <div class="proof-info"><h5>Игорь М.</h5><p>Эксперт по digital-маркетингу</p></div>
+                    </div>
+                </div>
+                <div class="proof-card">
+                    <p class="proof-quote">«Подписка на клуб окупается в первый месяц. Выпускники не уходят, создают совместные проекты, приводят новых клиентов по рефералке.»</p>
+                    <div class="proof-meta">
+                        <div class="proof-avatar">СВ</div>
+                        <div class="proof-info"><h5>Светлана В.</h5><p>Основатель школы дизайна</p></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="final-cta" id="contact">
+            <h2>Готовы запустить курс с живым сообществом?</h2>
+            <p>Перестаньте платить комиссиям платформам. Получите полный контроль, прозрачную аналитику и лояльную аудиторию на базе Feekool.</p>
+            <div class="final-btns">
+                <a href="#courses" class="btn">🚀 Начать продавать курс</a>
+                <a href="https://github.com/feekool/feekool.github.io/issues" target="_blank" class="btn btn-ghost">💬 Получить помощь в настройке</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p><strong>CourseHub</strong> — шаблон платформы для продажи курсов + адаптация форума Feekool на GitHub Pages.<br>
+        Базовая версия: бесплатно, открытый код, без ежемесячных платежей.</p>
+        <div class="footer-nav">
+            <a href="#courses">Курсы</a>
+            <a href="#forum">Интеграция форума</a>
+            <a href="#setup">Инструкция по запуску</a>
+            <a href="https://github.com/feekool/feekool.github.io" target="_blank">🐙 GitHub</a>
+        </div>
+        <p style="margin-top: 16px; font-size: 0.85rem;">📚 Образование без границ • 💬 Живое сообщество • 🚀 Запуск за 60 секунд</p>
+    </footer>
+</div>
+
+<div class="mobile-cta hide-desk" role="navigation">
+    <a href="#courses" class="btn btn-primary">🚀 Запустить курс с форумом</a>
+</div>
+
+<div id="demo" style="height: 1px;"></div>
+
+<script>
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+        a.addEventListener('click', function(e) {
+            const h = this.getAttribute('href');
+            if (h.length > 1) {
+                e.preventDefault();
+                const t = document.querySelector(h);
+                if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+    const mob = document.querySelector('.mobile-cta');
+    if (mob) {
+        let ls = 0;
+        window.addEventListener('scroll', () => {
+            const c = window.pageYOffset;
+            if (c > 350 && c > ls) { mob.style.transform = 'translateY(0)'; mob.style.opacity = '1'; }
+            else if (c < 100) { mob.style.transform = 'translateY(100px)'; mob.style.opacity = '0'; }
+            ls = c;
+        }, { passive: true });
+    }
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Course",
+  "name": "CourseHub + Feekool",
+  "description": "Платформа для продажи курсов с интеграцией живого форума. Без комиссий, полный контроль, запуск за 1 минуту на GitHub Pages.",
+  "provider": { "@type": "Organization", "name": "Feekool Community", "url": "https://feekool.github.io" },
+  "offers": { "@type": "AggregateOffer", "priceCurrency": "RUB", "lowPrice": "0", "highPrice": "14900" },
+  "keywords": "продажа курсов, форум для студентов, образовательная платформа, Feekool, GitHub Pages, монетизация знаний"
+}
+</script>
+
+</body>
+</html>
